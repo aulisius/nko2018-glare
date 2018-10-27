@@ -2,17 +2,24 @@
   "name": "nko2018-glare",
   "version": "1.0.0",
   "description": "Glare - Node knockout 2018",
-  "main": "src/server.js",
-  "scripts": {},
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Hackbit/nko2018-glare.git"
   },
-  "keywords": ["glare"],
+  "keywords": [
+    "glare"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Hackbit/nko2018-glare/issues"
   },
-  "homepage": "https://github.com/Hackbit/nko2018-glare#readme"
+  "homepage": "https://github.com/Hackbit/nko2018-glare#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
