@@ -6,7 +6,7 @@ function preloadNinja(context){
 }
 
 function initNinjaSprites(context, pos){
-  let ninja = context.add.sprite(pos.x, pos.y, 'ninja', '1.png');
+  let ninja = context.physics.add.sprite(pos.x, pos.y, 'ninja', '1.png').setOrigin(0, 0);
 
   let runFrames = context.anims.generateFrameNames('ninja', {
                          start: 1, end: 8, zeroPad: 0,
