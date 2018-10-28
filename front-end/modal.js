@@ -1,4 +1,4 @@
-import { setUpCamera } from "./main";
+import { setUpCamera, startGame } from "./main";
 
 var videoTag = document.getElementById('webcam');
 videoTag.hidden = true;
@@ -24,9 +24,14 @@ $(document).on('closing', "#modal", function(event){
 $(document).on('opening', '#modal', function(event) {
   shiftVideoTag('webcam-anchor');
   setUpCamera();
-})
+});
 function shiftVideoTag(id){
   document.getElementById(id).appendChild(videoTag);
   videoTag.hidden = false;
   videoTag.play();
 }
+
+$("#predict").on('click', function(event){
+  $("#modal").iziModal('close');
+  startGame();
+});
