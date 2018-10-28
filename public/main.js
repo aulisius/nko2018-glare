@@ -15,17 +15,19 @@ let game = new Phaser.Game({
     scene: { preload, create, update }
 });
 let lastObstacle = null;
+// let score = 0;
 let player, platforms, obstacles;
 let startPlaying = false;
 
 function preload() {
     this.load.setBaseURL('/');
 
-    this.load.image('sky', 'static/assets/space3.png');
-    this.load.image('blue', 'static/assets/blue.png');
-    this.load.image('platform', 'static/assets/platform.png');
-    this.load.spritesheet('dude', 'static/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.image('sky', 'public/assets/space3.png');
+    this.load.image('blue', 'public/assets/blue.png');
+    this.load.image('platform', 'public/assets/platform.png');
+    this.load.spritesheet('dude', 'public/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     preloadNinja(this);
+    preloadVillains(this);
 }
 
 function create() {
@@ -34,10 +36,8 @@ function create() {
     platforms = this.physics.add.staticGroup();
     obstacles = this.physics.add.staticGroup();
 
-    let mPlatform = platforms.create(0, Height - 100, 'platform')
+    platforms.create(0, Height - 100, 'platform')
         .setOrigin(0, 0)
-        .setGravityY(0)
-        // .setSize(window.innerWidth)
         .setScale(1000, 1)
         .refreshBody();
 
@@ -52,22 +52,30 @@ function create() {
 
     // emitter.startFollow(logo);
 
-    player = initNinjaSprites(this, { x: 0, y: Height - 400 })
+    player = initNinjaSprites(this, { x: 0, y: Height - 250 })
 
-    player.setGravityY(300)
+    player.setGravityY(500)
 
     // this.cameras.main.setViewport(0, Height, Width, Height).setOrigin(0, 0)
     this.cameras.main.startFollow(player, true, 0.1)
     this.cameras.main.setFollowOffset(100, 0)
 
     this.physics.add.collider(player, platforms);
+    // TODO: Improve this
     this.physics.add.overlap(player, obstacles, (_player, obstacle) => {
-        player.setFrame("1.png").disableBody(true);
-        debugger;
-        // this.physics.pause();
+        player.disableBody(true);
+        this.physics.pause();
         this.cameras.main.stopFollow();
         startPlaying = false;
-    }, (_player, obstacle) => {});
+        // console.log(score);
+    },
+        (p, o) => {
+            let pos = p.getTopLeft();
+            let pWidth = p.width;
+            let pHeight = p.height;
+            return false;
+        }
+    );
     this.physics.add.collider(obstacles, platforms);
 }
 
@@ -76,9 +84,10 @@ function update() {
 
     if (startPlaying) {
         if (player.x >= lastObstacle.x) {
-            lastObstacle = obstacles.create(lastObstacle.x + Width, lastObstacle.y, 'dude')
+            // score += 100;
+            lastObstacle = obstacles.create(lastObstacle.x + Width, lastObstacle.y  - 5, `villain_${Phaser.Math.Between(1, 5)}`)
+                .setBounce(0.2)
                 .setOrigin(0, 0)
-                .setScale(2)
                 .refreshBody()
         }
     }
