@@ -4,9 +4,12 @@
   "description": "Glare - Node knockout 2018",
   "main": "server.js",
   "scripts": {
+    "prestart": "npm run build",
     "start": "node server.js",
-    "watch": "cross-env NODE_ENV=development parcel capture.html --no-hmr --open",
-    "build": "cross-env NODE_ENV=production parcel build capture.html --out-file index.html --no-minify --public-url ./"
+    "watch": "cross-env NODE_ENV=development parcel index.html --no-hmr --open",
+    "prebuild": "rm -rf public",
+    "build": "cross-env NODE_ENV=production parcel build index.html --out-dir public --out-file index.html --no-minify --public-url ./",
+    "postbuild": "cp -r assets/ public/assets"
   },
   "repository": {
     "type": "git",

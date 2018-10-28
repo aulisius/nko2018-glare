@@ -1,11 +1,11 @@
 let ninja;
 
-function preloadNinja(context) {
-  context.load.multiatlas('ninja', 'public/assets/ninja_run.json', 'public/assets/');
-  context.load.multiatlas('ninjaFly', 'public/assets/ninja_fly.json', 'public/assets');
+export function preloadNinja(context) {
+  context.load.multiatlas('ninja', 'assets/ninja_run.json', 'assets/');
+  context.load.multiatlas('ninjaFly', 'assets/ninja_fly.json', 'assets');
 }
 
-function initNinjaSprites(context, pos) {
+export  function initNinjaSprites(context, pos) {
   let ninja = context.physics.add.sprite(pos.x, pos.y, 'ninja', '0.png').setOrigin(0, 0);
 
   let runFrames = context.anims.generateFrameNames('ninja', {
