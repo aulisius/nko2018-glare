@@ -1,4 +1,6 @@
 #hackbit-vote-widget {
+  position: fixed;
+  top: 0;
 }
 
 #glare {
