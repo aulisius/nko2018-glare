@@ -32,16 +32,22 @@ let palmCount = 0, fistCount = 0;
 
 export function setUpCamera() {
     Promise.all([setupWebcam(webcamElement), loadMobileNet()]).then(values => {
+        document.getElementById('closed-fist').hidden = false;
+        let message = document.getElementById("message");
+        message.innerText = `We'll start with the motion for coming down. We'll need 20 of those. 
+        Hold your hand like a closed fist (recommended) and keep pressing on the button below`
         document
             .getElementById("closed-fist")
             .addEventListener("click", function () {
                 addLabel(webcamElement, 1);
                 fistCount = fistCount + 1;
                 if (fistCount < 20) {
+                    message.innerHTML = `<b>${20 - fistCount}</b> sample${20 - fistCount === 1 ? "" : "s"} left.`
                     document.getElementById('open-palm').hidden = true;
                 }
                 if (fistCount === 20) {
-                    document.getElementById('closed-fist').disabled = true;
+                    message.innerText = "Time for going up! Open your palm and keep it close to the webcam such that the entire hand is captured. We'll need 20 of these too";
+                    document.getElementById('closed-fist').hidden = true;
                     document.getElementById('open-palm').hidden = false;
                 }
             });
@@ -50,18 +56,17 @@ export function setUpCamera() {
             addLabel(webcamElement, 0);
             palmCount = palmCount + 1;
             if (palmCount < 20) {
-                document.getElementById('train').hidden = true;
+                message.innerHTML = `<b>${20 - palmCount}</b> sample${20 - palmCount === 1 ? "" : "s"} left.`
             }
             if (palmCount === 20) {
-                document.getElementById('open-palm').disabled = true;
-                document.getElementById('train').hidden = false;
+                message.innerText = "Calibrating...";
+                document.getElementById('open-palm').hidden = true;
+                train().then(() => {
+                    message.innerText = "We are now ready to go!";
+                    document.getElementById('predict').hidden = false;
+                    // Game is ready here
+                });
             }
-        });
-        document.getElementById("train").addEventListener("click", function () {
-            train().then(() => {
-                document.getElementById('predict').hidden = false;
-                // Game is ready here
-            });
         });
     }).catch(console.error);
 }
@@ -87,7 +92,7 @@ function preload() {
 
 function predictionHandler(prediction) {
     if (prediction == 0) {
-        player.setVelocityY(-200);
+        player.setVelocityY(-110);
         player.anims.play("fly", true);
     } else {
         player.setVelocityY(200);
@@ -97,12 +102,15 @@ function predictionHandler(prediction) {
 
 function create() {
     emitter.on("prediction", predictionHandler, this);
-
-    // this.add.image(0, 0, 'sky').setOrigin(0, 0);
     platforms = this.physics.add.staticGroup();
     obstacles = this.physics.add.group();
     var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
 
+    platforms
+        .create(-10, -40, "platform")
+        .setOrigin(0, 0)
+        .setScale(1000, 1)
+        .refreshBody();
 
     platforms
         .create(-10, Height - 100, "platform")
@@ -122,10 +130,13 @@ function create() {
         obstacles,
         (_player, obstacle) => {
             player.disableBody(true);
-            // this.physics.pause();
+            this.physics.pause();
             startPlaying = false;
             this.cameras.main.fadeOut(1500);
             // TODO:  store score in redis
+            document.getElementById("score").hidden = false;
+            document.getElementById("score").innerText = score;
+            $("#score-modal").iziModal('open');
             score = 0;
             counter = 0;
         },
@@ -158,7 +169,7 @@ function create() {
                 }
             }
             let percentage = (Math.abs(delX) * Math.abs(delY)) / (player.displayHeight * player.displayWidth);
-            return percentage > 0.52;
+            return percentage > 0.51;
         }
     );
     this.physics.add.collider(obstacles, platforms);
@@ -178,11 +189,10 @@ async function update() {
         if (player.x >= lastObstacle.x) {
             lastObstacle = obstacles
                 .create(
-                    lastObstacle.x + Width,
+                    lastObstacle.x + Width - 10,
                     Height - 292,
                     `villain_${Phaser.Math.Between(1, 5)}`
                 )
-                .setBounce(0.2)
                 .setOrigin(0, 0);
             if (!firstTurn) {
                 score += 100;

@@ -16,7 +16,17 @@
   border-radius: 5px;
 }
 
-/* #webcam {
-  height: 400px;
-  transform: scaleX(-1);
-} */
+#intro-modal {
+  padding: 15px;
+  padding-top: 5px;
+  line-height: 1.4em;
+}
+
+#message {
+  line-height: 1.4em;
+}
+
+.help {
+  width: 20vw;
+  padding-left: 10px;
+}

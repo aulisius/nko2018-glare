@@ -34,29 +34,57 @@
         <video autoplay playsinline muted id="webcam" width="500" height="300"></video>
     </div>
 
-    <!-- <div class="container">
-        <div class="item"> -->
     <canvas id="glare"></canvas>
-    <!-- </div>
-    </div> -->
 
-
-    <div id="intro-modal">
-        <p>This is the rules and regulations one after the another</p>
+    <div id="intro-modal" hidden>
+        <p>
+            Hi, fellow gamer! Welcome to Glare - An endless runner you play without
+            touching your keyboard or your mouse!
+        </p>
+        <ul>
+            <strong>Instructions</strong>
+            <li>
+                You need to have and allow access to your Webcam in order to play this game.
+            </li>
+            <li>
+                On clicking 'Next', you'll be presented with the option to calibrate yours hands for the game
+            </li>
+            <li>
+                You get to choose two gestures - One for going up and the other for coming down.
+            </li>
+            <li>
+                Once calibration is done, the game is set to play! All the best!
+            </li>
+        </ul>
         <a href="#" data-izimodal-open="#modal" data-izimodal-transitionin="fadeInDown">Next</a>
     </div>
-    <div id="modal">
+    <div id="modal" hidden>
         <!-- data-iziModal-fullscreen="true"  data-iziModal-title="Welcome"  data-iziModal-subtitle="Subtitle"  data-iziModal-icon="icon-home" -->
-        <!-- Modal content -->
-        <span id="webcam-anchor" style="">
+        <div class="container">
+            <div class="item">
+                <span id="webcam-anchor">
 
-        </span>
-        <div class="button-section">
-            <button id="closed-fist">&#x270A Closed Fist</button>
-            <button id="open-palm" hidden=true>&#x1F590 Open Palm</button>
-            <button id="train" hidden=true>Calliberate</button>
-            <button id="predict" hidden="true">play</button>
+                </span>
+            </div>
+            <div class="item help">
+                <p id="message"></p>
+                <button id="closed-fist" hidden>&#x270A Falling down!</button>
+                <button id="open-palm" hidden>&#x1F590 Going up!</button>
+                <button id="predict" hidden>PLAY!</button>
+            </div>
         </div>
+    </div>
+
+    <div id="score-modal" hidden>
+        <div style="margin:auto;width:50%;text-align: center;">
+            <h3> You scored </h3>
+        </div>
+        <div style="margin:auto;width:50%;text-align: center;">
+            <h1 id="score"> </h1>
+        </div>
+        <button onclick="window.location.reload()" style="display:block;margin:auto;margin-bottom:10px;">
+            Restart
+        </button>
     </div>
 
     <!-- Trigger to open Modal -->
@@ -70,7 +98,6 @@
         document.querySelector(".hb-link > img:nth-child(1)").src = "https://hackbit-nko2018.s3.amazonaws.com/images/nko-logo.png"
     </script>
     <script src="front-end/main.js"></script>
-
     <script src="front-end/modal.js"></script>
 </body>
 
