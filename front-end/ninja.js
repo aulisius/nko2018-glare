@@ -1,5 +1,3 @@
-let ninja;
-
 export function preloadNinja(context) {
   context.load.multiatlas('ninja', 'assets/ninja_run.json', 'assets/');
   context.load.multiatlas('ninjaFly', 'assets/ninja_fly.json', 'assets');

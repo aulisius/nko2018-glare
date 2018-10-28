@@ -28,29 +28,59 @@ let firstTurn = true;
 let startPlaying = false;
 let webcamElement = document.getElementById("webcam");
 
+let palmCount = 0, fistCount = 0;
+
+export function setUpCamera() {
+    Promise.all([setupWebcam(webcamElement), loadMobileNet()]).then(values => {
+        document
+            .getElementById("closed-fist")
+            .addEventListener("click", function () {
+                addLabel(webcamElement, 1);
+                fistCount = fistCount + 1;
+                if (fistCount < 20) {
+                    document.getElementById('open-palm').hidden = true;
+                }
+                if (fistCount === 20) {
+                    document.getElementById('closed-fist').disabled = true;
+                    document.getElementById('open-palm').hidden = false;
+                }
+            });
+
+        document.getElementById("open-palm").addEventListener("click", function () {
+            addLabel(webcamElement, 0);
+            palmCount = palmCount + 1;
+            if (palmCount < 20) {
+                document.getElementById('train').hidden = true;
+            }
+            if (palmCount === 20) {
+                document.getElementById('open-palm').disabled = true;
+                document.getElementById('train').hidden = false;
+            }
+        });
+        document.getElementById("train").addEventListener("click", function () {
+            train().then(() => {
+                document.getElementById('predict').hidden = false;
+                // Game is ready here
+            });
+        });
+    }).catch(console.error);
+}
+
+export function startGame() {
+    startPlaying = true;
+}
+
 function preload() {
     this.load.setBaseURL("/");
 
     this.load.image("sky", "assets/space3.png");
     this.load.image("blue", "assets/blue.png");
     this.load.image("platform", "assets/platform.png");
-    Promise.all([setupWebcam(webcamElement), loadMobileNet()])
-        .then(values => {
-            document
-                .getElementById("closed-fist")
-                .addEventListener("click", function () {
-                    addLabel(webcamElement, 1);
-                });
 
-            document.getElementById("open-palm").addEventListener("click", function () {
-                addLabel(webcamElement, 0);
-            });
-            document.getElementById("train").addEventListener("click", function () {
-                train().then(() => {
-                    startPlaying = true;
-                });
-            });
-        }).catch(console.error);
+    this.load.spritesheet("dude", "assets/dude.png", {
+        frameWidth: 32,
+        frameHeight: 48
+    });
     preloadNinja(this);
     preloadVillains(this);
 }
@@ -127,7 +157,6 @@ function create() {
                     delY = playerBottomLeft.y - obstacleTopRight.y;
                 }
             }
-            console.log(delX + "  <---->  " + delY);
             let percentage = (Math.abs(delX) * Math.abs(delY)) / (player.displayHeight * player.displayWidth);
             return percentage > 0.52;
         }
@@ -139,7 +168,7 @@ function create() {
 
 async function update() {
     if (startPlaying) {
-        player.setVelocityX(200);
+        player.setVelocityX(120);
         counter++;
         if (counter % 3 == 0) {
             await predict(webcamElement).then(classId =>

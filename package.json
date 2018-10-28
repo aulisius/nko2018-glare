@@ -26,8 +26,9 @@
   "homepage": "https://github.com/Hackbit/nko2018-glare#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^0.13.3",
-    "vega-embed": "^3.0.0",
     "express": "^4.16.4",
+    "izimodal": "^1.5.1",
+    "vega-embed": "^3.0.0",
     "@babel/core": "^7.0.0-0",
     "@babel/plugin-transform-runtime": "^7.1.0",
     "babel-preset-env": "~1.6.1",

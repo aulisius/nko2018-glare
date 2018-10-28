@@ -4,14 +4,17 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Glare - 2018</title>
+    <title>Glare - Node Knockout 2018</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="front-end/main.css" />
+    <link rel="stylesheet" href="front-end/iziModal.min.css">
     <script src="https://browser.sentry-cdn.com/4.2.3/bundle.min.js" crossorigin="anonymous"></script>
     <script>
         Sentry.init({ dsn: 'https://6525b5000c38408395f6d19bd42de068@sentry.io/1310271' });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/js/iziModal.min.js"></script>
     <style>
         .container {
             display: flex;
@@ -27,19 +30,38 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="item">
-            <video autoplay playsinline muted id="webcam" width="500" height="300"></video>
-            <div>
-                <button id="closed-fist">Closed Fist</button>
-                <button id="open-palm">Open Palm</button>
-                <button id="train">Let's GO</button>
-            </div>
-        </div>
-        <div class="item">
-            <canvas id="glare"></canvas>
+    <div id="body-anchor" style="position:fixed;bottom:0px">
+        <video autoplay playsinline muted id="webcam" width="500" height="300"></video>
+    </div>
+
+    <!-- <div class="container">
+        <div class="item"> -->
+    <canvas id="glare"></canvas>
+    <!-- </div>
+    </div> -->
+
+
+    <div id="intro-modal">
+        <p>This is the rules and regulations one after the another</p>
+        <a href="#" data-izimodal-open="#modal" data-izimodal-transitionin="fadeInDown">Next</a>
+    </div>
+    <div id="modal">
+        <!-- data-iziModal-fullscreen="true"  data-iziModal-title="Welcome"  data-iziModal-subtitle="Subtitle"  data-iziModal-icon="icon-home" -->
+        <!-- Modal content -->
+        <span id="webcam-anchor" style="">
+
+        </span>
+        <div class="button-section">
+            <button id="closed-fist">&#x270A Closed Fist</button>
+            <button id="open-palm" hidden=true>&#x1F590 Open Palm</button>
+            <button id="train" hidden=true>Calliberate</button>
+            <button id="predict" hidden="true">play</button>
         </div>
     </div>
+
+    <!-- Trigger to open Modal -->
+    <a href="#modal" class="trigger" style="position:fixed;bottom:0px;right:50%;transform:translateX(-50%);">Instructions</a>
+
     <footer>
         <div id="hackbit-vote-widget"></div>
     </footer>
@@ -48,6 +70,8 @@
         document.querySelector(".hb-link > img:nth-child(1)").src = "https://hackbit-nko2018.s3.amazonaws.com/images/nko-logo.png"
     </script>
     <script src="front-end/main.js"></script>
+
+    <script src="front-end/modal.js"></script>
 </body>
 
 </html>
