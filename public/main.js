@@ -69,11 +69,37 @@ function create() {
         startPlaying = false;
         // console.log(score);
     },
-        (p, o) => {
-            let pos = p.getTopLeft();
-            let pWidth = p.width;
-            let pHeight = p.height;
-            return false;
+        (player, obstacle) => {
+            let delX, delY;
+            let playerBottomRight = player.getBottomRight();
+            let playerBottomLeft = player.getBottomLeft();
+            let playerTopRight = player.getTopRight();
+
+            let obstacleTopLeft = obstacle.getTopLeft();
+            let obstacleTopRight = obstacle.getTopRight();
+            let obstacleBottomLeft = obstacle.getBottomLeft();
+            let obstacleBottomRight = obstacle.getBottomRight();
+
+            if(obstacleBottomLeft.y == playerBottomRight.y){
+              /* they are on the same ground*/
+              delX = Math.abs(playerBottomRight.x - obstacleBottomLeft.x);
+              delY = Math.min(playerTopRight.y, obstacleTopLeft.y);
+              console.log("A  "+delX+"  <---->  "+delY);
+            }else{
+              /* now the collision could have happened while player climbing up or falling down*/
+              let direction = (playerBottomRight.x - obstacleBottomLeft.x > 0) && (playerBottomRight.x - obstacleBottomRight.x < 0);
+              if (direction) {
+                /* this means that the collision happened while going up */
+                delX = playerBottomRight.x - obstacleTopLeft.x;
+                delY = playerBottomRight.y - obstacleTopLeft.y;
+              } else {
+                delX = obstacleTopRight.x - playerBottomLeft.x;
+                delY = playerBottomLeft.y - obstacleTopRight.y;
+              }
+            }
+            console.log(delX+"  <---->  "+delY);
+            let percentage = (Math.abs(delX)*Math.abs(delY)) / (player.displayHeight* player.displayWidth);
+            return percentage > 0.55;
         }
     );
     this.physics.add.collider(obstacles, platforms);
