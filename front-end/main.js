@@ -1,6 +1,7 @@
 import { initNinjaSprites, preloadNinja } from "./ninja";
 import { preloadVillains } from "./villains";
-
+import { setupWebcam } from "./webcam";
+import { addLabel, train, predict, loadMobileNet } from "./model";
 let Height = window.innerHeight * 0.8;
 let Width = window.innerWidth * 0.8;
 let game = new Phaser.Game({
@@ -22,6 +23,7 @@ let lastObstacle = null;
 // let score = 0;
 let player, platforms, obstacles;
 let startPlaying = false;
+let webcamElement = document.getElementById("webcam");
 
 function preload() {
   this.load.setBaseURL("/");
@@ -29,6 +31,29 @@ function preload() {
   this.load.image("sky", "assets/space3.png");
   this.load.image("blue", "assets/blue.png");
   this.load.image("platform", "assets/platform.png");
+
+  Promise.all([setupWebcam(webcamElement), loadMobileNet()]).then(values => {
+    document
+      .getElementById("closed-fist")
+      .addEventListener("click", function() {
+        addLabel(webcamElement, 1);
+      });
+
+    document.getElementById("open-palm").addEventListener("click", function() {
+      addLabel(webcamElement, 0);
+    });
+    document.getElementById("train").addEventListener("click", function() {
+      train().then(() => {
+        startPlaying = true;
+        // Game is ready here
+        // document
+        //   .getElementById("predict")
+        //   .addEventListener("click", function() {
+        //     predict();
+        //   });
+      });
+    });
+  });
   this.load.spritesheet("dude", "assets/dude.png", {
     frameWidth: 32,
     frameHeight: 48
@@ -47,11 +72,11 @@ function predictionHandler(prediction) {
   }
 }
 
-function startPredicting() {
-  while (true) {
-    predict().then(classId => emitter.emit("prediction", classId));
-  }
-}
+// function startPredicting() {
+//   while (true) {
+
+//   }
+// }
 
 function create() {
   // this.add.image(0, 0, 'sky').setOrigin(0, 0);
@@ -102,12 +127,19 @@ function create() {
     }
   );
   this.physics.add.collider(obstacles, platforms);
+  lastObstacle = player;
 }
 
+let counter = 0;
 function update() {
   let cursors = this.input.keyboard.createCursorKeys();
-
+  counter++;
   if (startPlaying) {
+    if (counter % 3 == 0) {
+      predict(webcamElement).then(classId =>
+        emitter.emit("prediction", classId)
+      );
+    }
     if (player.x >= lastObstacle.x) {
       // score += 100;
       lastObstacle = obstacles
@@ -129,18 +161,15 @@ function update() {
   //         .setScale(1000, 1)
   //         .refreshBody();
   // } else
-  if (cursors.space.isDown) {
-    if (startPlaying) {
-      player.setVelocityY(-120);
-      player.anims.play("fly", true);
-    } else {
-      startPlaying = true;
-      lastObstacle = player;
-    }
-  } else {
-    if (startPlaying) {
-      player.setVelocityX(200);
-      player.anims.play("run", true);
-    }
-  }
+  // if (cursors.space.isDown) {
+  //   if (startPlaying) {
+  //     player.setVelocityY(-120);
+  //     player.anims.play("fly", true);
+  //   }
+  // } else {
+  //   if (startPlaying) {
+  //     player.setVelocityX(200);
+  //     player.anims.play("run", true);
+  //   }
+  // }
 }

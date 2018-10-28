@@ -1,18 +1,19 @@
-#hackbit-vote-widget {}
-
-#glare {
-    border: 1px solid grey;
-    background: white;
-    width: 80%;
-    display: block;
-    margin-top: 10vh;
-    padding: 0;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 0;
+#hackbit-vote-widget {
 }
 
-#webcam {
-    height: 160px;
-    transform: scaleX(-1);
-  }
+#glare {
+  border: 1px solid grey;
+  background: white;
+  width: 80%;
+  display: block;
+  margin-top: 10vh;
+  padding: 0;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0;
+}
+
+/* #webcam {
+  height: 400px;
+  transform: scaleX(-1);
+} */
