@@ -1,7 +1,3 @@
-import * as tf from "@tensorflow/tfjs";
-
-// let webcamElement = document.getElementById("webcam");
-
 function adjustVideoSize(webcamElement, width, height) {
   const aspectRatio = width / height;
   if (width >= height) {
@@ -17,7 +13,7 @@ export async function setupWebcam(webcamElement) {
     navigator.getUserMedia =
       navigator.getUserMedia ||
       navigatorAny.webkitGetUserMedia ||
-      navigatorAny.mozGetUserMedia;
+      navigator.mediaDevices.getUserMedia;
     if (navigator.getUserMedia) {
       navigator.getUserMedia(
         { video: true },
@@ -37,45 +33,12 @@ export async function setupWebcam(webcamElement) {
           );
         },
         error => {
-          reject();
+          reject(error);
         }
       );
     } else {
-      reject();
+      reject("This version of the browser does not support the required device functions");
     }
   });
 }
 
-// function initModel() {
-//   let webcamElement = document.getElementById("webcam");
-//   setupWebcam(webcamElement)
-//     .then(webcamElement => {
-//       //   let img = capture();
-//       return loadMobileNet();
-//       //   console.log(img);
-//     })
-//     .then(() => {
-//       document
-//         .getElementById("closed-fist")
-//         .addEventListener("click", function() {
-//           addLabel(1);
-//         });
-
-//       document
-//         .getElementById("open-palm")
-//         .addEventListener("click", function() {
-//           addLabel(0);
-//         });
-//       document.getElementById("train").addEventListener("click", function() {
-//         train().then(() => {
-//           document
-//             .getElementById("predict")
-//             .addEventListener("click", function() {
-//               predict();
-//             });
-//         });
-//       });
-//     });
-// }
-
-// initModel();

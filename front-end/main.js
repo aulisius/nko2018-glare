@@ -1,200 +1,167 @@
+import { addLabel, loadMobileNet, predict, train } from "./model";
 import { initNinjaSprites, preloadNinja } from "./ninja";
 import { preloadVillains } from "./villains";
 import { setupWebcam } from "./webcam";
-import { addLabel, train, predict, loadMobileNet } from "./model";
-let Height = window.innerHeight * 0.8;
-let Width = window.innerWidth * 0.8;
+let Height = window.innerHeight * 0.6;
+let Width = window.innerWidth * 0.6;
+let counter = 0;
 let game = new Phaser.Game({
-  type: Phaser.AUTO,
-  width: Width,
-  height: Height,
-  physics: {
-    default: "arcade",
-    arcade: {
-      gravity: { y: 200 }
-    }
-  },
-  canvas: document.getElementById("glare"),
-  transparent: true,
-  scene: { preload, create, update }
+    type: Phaser.AUTO,
+    width: Width,
+    height: Height,
+    physics: {
+        default: "arcade",
+        arcade: {
+            gravity: { y: 200 }
+        }
+    },
+    canvas: document.getElementById("glare"),
+    transparent: true,
+    scene: { preload, create, update }
 });
 let emitter = new Phaser.Events.EventEmitter();
 let lastObstacle = null;
-// let score = 0;
+let score = 0;
+let scoreDOM = null;
 let player, platforms, obstacles;
+let firstTurn = true;
 let startPlaying = false;
 let webcamElement = document.getElementById("webcam");
 
 function preload() {
-  this.load.setBaseURL("/");
+    this.load.setBaseURL("/");
 
-  this.load.image("sky", "assets/space3.png");
-  this.load.image("blue", "assets/blue.png");
-  this.load.image("platform", "assets/platform.png");
+    this.load.image("sky", "assets/space3.png");
+    this.load.image("blue", "assets/blue.png");
+    this.load.image("platform", "assets/platform.png");
+    Promise.all([setupWebcam(webcamElement), loadMobileNet()])
+        .then(values => {
+            document
+                .getElementById("closed-fist")
+                .addEventListener("click", function () {
+                    addLabel(webcamElement, 1);
+                });
 
-  Promise.all([setupWebcam(webcamElement), loadMobileNet()]).then(values => {
-    document
-      .getElementById("closed-fist")
-      .addEventListener("click", function() {
-        addLabel(webcamElement, 1);
-      });
-
-    document.getElementById("open-palm").addEventListener("click", function() {
-      addLabel(webcamElement, 0);
-    });
-    document.getElementById("train").addEventListener("click", function() {
-      train().then(() => {
-        startPlaying = true;
-        // Game is ready here
-        // document
-        //   .getElementById("predict")
-        //   .addEventListener("click", function() {
-        //     predict();
-        //   });
-      });
-    });
-  });
-  this.load.spritesheet("dude", "assets/dude.png", {
-    frameWidth: 32,
-    frameHeight: 48
-  });
-  preloadNinja(this);
-  preloadVillains(this);
+            document.getElementById("open-palm").addEventListener("click", function () {
+                addLabel(webcamElement, 0);
+            });
+            document.getElementById("train").addEventListener("click", function () {
+                train().then(() => {
+                    startPlaying = true;
+                });
+            });
+        }).catch(console.error);
+    preloadNinja(this);
+    preloadVillains(this);
 }
 
 function predictionHandler(prediction) {
-  if (prediction == 0) {
-    player.setVelocityY(-120);
-    player.anims.play("fly", true);
-  } else {
-    player.setVelocityX(200);
-    player.anims.play("run", true);
-  }
+    if (prediction == 0) {
+        player.setVelocityY(-200);
+        player.anims.play("fly", true);
+    } else {
+        player.setVelocityY(200);
+        player.anims.play("run", true);
+    }
 }
-
-// function startPredicting() {
-//   while (true) {
-
-//   }
-// }
 
 function create() {
-  // this.add.image(0, 0, 'sky').setOrigin(0, 0);
+    emitter.on("prediction", predictionHandler, this);
 
-  platforms = this.physics.add.staticGroup();
-  obstacles = this.physics.add.staticGroup();
+    // this.add.image(0, 0, 'sky').setOrigin(0, 0);
+    platforms = this.physics.add.staticGroup();
+    obstacles = this.physics.add.group();
+    var style = { font: "65px Arial", fill: "#ff0044", align: "center" };
 
-  platforms
-    .create(0, Height - 100, "platform")
-    .setOrigin(0, 0)
-    .setScale(1000, 1)
-    .refreshBody();
 
-  // let particles = this.add.particles('blue');
+    platforms
+        .create(-10, Height - 100, "platform")
+        .setOrigin(0, 0)
+        .setScale(1000, 1)
+        .refreshBody();
+    player = initNinjaSprites(this, { x: 0, y: 0 });
+    player.setVelocity(0);
+    player.setGravityY(500);
+    this.cameras.main.startFollow(player, true, 0.1, 0.05);
+    this.cameras.main.setFollowOffset(50, 0);
+    scoreDOM = this.add.text(0, 0, String(score).padStart(3, 0), style).setScrollFactor(0);
 
-  // let emitter = particles.createEmitter({
-  //     speed: 10,
-  //     scale: { start: 1, end: 0 },
-  //     blendMode: 'NORMAL'
-  // });
+    this.physics.add.collider(player, platforms);
+    this.physics.add.overlap(
+        player,
+        obstacles,
+        (_player, obstacle) => {
+            player.disableBody(true);
+            // this.physics.pause();
+            startPlaying = false;
+            this.cameras.main.fadeOut(1500);
+            // TODO:  store score in redis
+            score = 0;
+            counter = 0;
+        },
+        (player, obstacle) => {
+            let delX, delY;
+            let playerBottomRight = player.getBottomRight();
+            let playerBottomLeft = player.getBottomLeft();
+            let playerTopRight = player.getTopRight();
 
-  // emitter.startFollow(logo);
+            let obstacleTopLeft = obstacle.getTopLeft();
+            let obstacleTopRight = obstacle.getTopRight();
+            let obstacleBottomLeft = obstacle.getBottomLeft();
+            let obstacleBottomRight = obstacle.getBottomRight();
 
-  player = initNinjaSprites(this, { x: 0, y: Height - 250 });
-  emitter.on("prediction", predictionHandler, this);
-  player.setGravityY(500);
-  // this.cameras.main.setViewport(0, Height, Width, Height).setOrigin(0, 0)
-  this.cameras.main.startFollow(player, true, 0.1);
-  this.cameras.main.setFollowOffset(100, 0);
-
-  this.physics.add.collider(player, platforms);
-  // TODO: Improve this
-  this.physics.add.overlap(
-    player,
-    obstacles,
-    (_player, obstacle) => {
-      player.disableBody(true);
-      this.physics.pause();
-      this.cameras.main.stopFollow();
-      startPlaying = false;
-      // console.log(score);
-    },(player, obstacle) => {
-        let delX, delY;
-        let playerBottomRight = player.getBottomRight();
-        let playerBottomLeft = player.getBottomLeft();
-        let playerTopRight = player.getTopRight();
-
-        let obstacleTopLeft = obstacle.getTopLeft();
-        let obstacleTopRight = obstacle.getTopRight();
-        let obstacleBottomLeft = obstacle.getBottomLeft();
-        let obstacleBottomRight = obstacle.getBottomRight();
-
-        if(obstacleBottomLeft.y == playerBottomRight.y){
-          /* they are on the same ground*/
-          delX = Math.abs(playerBottomRight.x - obstacleBottomLeft.x);
-          delY = Math.min(playerTopRight.y, obstacleTopLeft.y);
-          console.log("A  "+delX+"  <---->  "+delY);
-        }else{
-          /* now the collision could have happened while player climbing up or falling down*/
-          let direction = (playerBottomRight.x - obstacleBottomLeft.x > 0) && (playerBottomRight.x - obstacleBottomRight.x < 0);
-          if (direction) {
-            /* this means that the collision happened while going up */
-            delX = playerBottomRight.x - obstacleTopLeft.x;
-            delY = playerBottomRight.y - obstacleTopLeft.y;
-          } else {
-            delX = obstacleTopRight.x - playerBottomLeft.x;
-            delY = playerBottomLeft.y - obstacleTopRight.y;
-          }
+            if (obstacleBottomLeft.y == playerBottomRight.y) {
+                /* they are on the same ground*/
+                delX = Math.abs(playerBottomRight.x - obstacleBottomLeft.x);
+                delY = Math.min(playerTopRight.y, obstacleTopLeft.y);
+                console.log("A  " + delX + "  <---->  " + delY);
+            } else {
+                /* now the collision could have happened while player climbing up or falling down*/
+                let direction = (playerBottomRight.x - obstacleBottomLeft.x > 0) && (playerBottomRight.x - obstacleBottomRight.x < 0);
+                if (direction) {
+                    /* this means that the collision happened while going up */
+                    delX = playerBottomRight.x - obstacleTopLeft.x;
+                    delY = playerBottomRight.y - obstacleTopLeft.y;
+                } else {
+                    delX = obstacleTopRight.x - playerBottomLeft.x;
+                    delY = playerBottomLeft.y - obstacleTopRight.y;
+                }
+            }
+            console.log(delX + "  <---->  " + delY);
+            let percentage = (Math.abs(delX) * Math.abs(delY)) / (player.displayHeight * player.displayWidth);
+            return percentage > 0.52;
         }
-        console.log(delX+"  <---->  "+delY);
-        let percentage = (Math.abs(delX)*Math.abs(delY)) / (player.displayHeight* player.displayWidth);
-        return percentage > 0.55;
-    }
-  );
-  this.physics.add.collider(obstacles, platforms);
-  lastObstacle = player;
+    );
+    this.physics.add.collider(obstacles, platforms);
+    lastObstacle = player;
+
 }
 
-let counter = 0;
-function update() {
-  let cursors = this.input.keyboard.createCursorKeys();
-  counter++;
-  if (startPlaying) {
-    if (counter % 3 == 0) {
-      predict(webcamElement).then(classId =>
-        emitter.emit("prediction", classId)
-      );
-    }
-    if (player.x >= lastObstacle.x) {
-      // score += 100;
-      lastObstacle = obstacles
-        .create(
-          lastObstacle.x + Width,
-          lastObstacle.y - 5,
-          `villain_${Phaser.Math.Between(1, 5)}`
-        )
-        .setBounce(0.2)
-        .setOrigin(0, 0)
-        .refreshBody();
-    }
-  }
+async function update() {
+    if (startPlaying) {
+        player.setVelocityX(200);
+        counter++;
+        if (counter % 3 == 0) {
+            await predict(webcamElement).then(classId =>
+                emitter.emit("prediction", classId)
+            );
+        }
+        if (player.x >= lastObstacle.x) {
+            lastObstacle = obstacles
+                .create(
+                    lastObstacle.x + Width,
+                    Height - 292,
+                    `villain_${Phaser.Math.Between(1, 5)}`
+                )
+                .setBounce(0.2)
+                .setOrigin(0, 0);
+            if (!firstTurn) {
+                score += 100;
+                scoreDOM.setText(score);
+            } else {
+                firstTurn = false;
+            }
 
-  // if (cursors.down.isDown) {
-  //     platforms.create(currentX, Height - 100, 'platform')
-  //         .setOrigin(0, 0)
-  //         .setGravityY(0)
-  //         .setScale(1000, 1)
-  //         .refreshBody();
-  // } else
-  // if (cursors.space.isDown) {
-  //   if (startPlaying) {
-  //     player.setVelocityY(-120);
-  //     player.anims.play("fly", true);
-  //   }
-  // } else {
-  //   if (startPlaying) {
-  //     player.setVelocityX(200);
-  //     player.anims.play("run", true);
-  //   }
-  // }
+        }
+    }
 }

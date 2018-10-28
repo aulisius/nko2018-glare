@@ -45,9 +45,6 @@ export function addLabel(webcamElement, label) {
   tf.tidy(() => {
     const img = capture(webcamElement);
     addTrainingImage(mobilenet.predict(img), label);
-
-    // Draw the preview thumbnail.
-    // ui.drawThumb(img, label);
   });
 }
 
@@ -106,8 +103,6 @@ function capture(webcamElement) {
 }
 
 export async function predict(webcamElement) {
-  //   ui.isPredicting();
-  //   while (true) {
   const predictedClass = tf.tidy(() => {
     // Capture the frame from the webcam.
     const img = capture(webcamElement);
@@ -128,9 +123,6 @@ export async function predict(webcamElement) {
   const classId = (await predictedClass.data())[0];
   console.log("Predicted " + classId);
   predictedClass.dispose();
-  //   ui.predictClass(classId);
   await tf.nextFrame();
   return classId;
-  //   }
-  //   ui.donePredicting();
 }
