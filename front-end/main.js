@@ -1,3 +1,6 @@
+import { initNinjaSprites, preloadNinja } from "./ninja";
+import { preloadVillains } from "./villains";
+
 let Height = window.innerHeight * 0.8;
 let Width = window.innerWidth * 0.8;
 let game = new Phaser.Game({
@@ -22,10 +25,10 @@ let startPlaying = false;
 function preload() {
     this.load.setBaseURL('/');
 
-    this.load.image('sky', 'public/assets/space3.png');
-    this.load.image('blue', 'public/assets/blue.png');
-    this.load.image('platform', 'public/assets/platform.png');
-    this.load.spritesheet('dude', 'public/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.image('sky', 'assets/space3.png');
+    this.load.image('blue', 'assets/blue.png');
+    this.load.image('platform', 'assets/platform.png');
+    this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     preloadNinja(this);
     preloadVillains(this);
 }
@@ -85,20 +88,21 @@ function update() {
     if (startPlaying) {
         if (player.x >= lastObstacle.x) {
             // score += 100;
-            lastObstacle = obstacles.create(lastObstacle.x + Width, lastObstacle.y  - 5, `villain_${Phaser.Math.Between(1, 5)}`)
+            lastObstacle = obstacles.create(lastObstacle.x + Width, lastObstacle.y - 5, `villain_${Phaser.Math.Between(1, 5)}`)
                 .setBounce(0.2)
                 .setOrigin(0, 0)
                 .refreshBody()
         }
     }
 
-    if (cursors.down.isDown) {
-        platforms.create(currentX, Height - 100, 'platform')
-            .setOrigin(0, 0)
-            .setGravityY(0)
-            .setScale(1000, 1)
-            .refreshBody();
-    } else if (cursors.space.isDown) {
+    // if (cursors.down.isDown) {
+    //     platforms.create(currentX, Height - 100, 'platform')
+    //         .setOrigin(0, 0)
+    //         .setGravityY(0)
+    //         .setScale(1000, 1)
+    //         .refreshBody();
+    // } else 
+    if (cursors.space.isDown) {
         if (startPlaying) {
             player.setVelocityY(-120)
             player.anims.play("fly", true);

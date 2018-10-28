@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Glare - 2018</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="public/main.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="front-end/main.css" />
     <script src="https://browser.sentry-cdn.com/4.2.3/bundle.min.js" crossorigin="anonymous"></script>
     <script>
         Sentry.init({ dsn: 'https://6525b5000c38408395f6d19bd42de068@sentry.io/1310271' });
@@ -16,10 +16,13 @@
 </head>
 
 <body>
+    <video autoplay playsinline muted id="webcam" width="224" height="224"></video>
+    <button id="closed-fist">Closed Fist</button>
+    <button id="open-palm">Open Palm</button>
+    <button id="train">Let's GO</button>
+    <button id="predict">Predict</button>
     <canvas id="glare"></canvas>
-    <script src="public/villains.js"></script>
-    <script src="public/ninja.js"></script>
-    <script src="public/main.js"></script>
+    <script src="front-end/main.js"></script>
     <!-- <div id="hackbit-vote-widget"></div> -->
     <!-- <script src="https://www.nodeknockout.com/entries/131-aulisius/vote.js" type="text/javascript"></script> -->
 </body>
