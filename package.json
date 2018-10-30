@@ -4,7 +4,7 @@
   "description": "Glare - Node knockout 2018",
   "main": "server.js",
   "scripts": {
-    "prestart": "npm run build",
+    "postinstall": "npm run build",
     "start": "node server.js",
     "watch": "cross-env NODE_ENV=development parcel index.html --no-hmr --open",
     "prebuild": "rm -rf public",
