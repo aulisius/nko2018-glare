@@ -1,0 +1,32 @@
+#hackbit-vote-widget {
+  position: fixed;
+  top: 0;
+}
+
+#glare {
+  border: 1px solid grey;
+  background: white;
+  width: 60%;
+  display: block;
+  margin-top: 10vh;
+  padding: 0;
+  margin-left: 30%;
+  margin-right: auto;
+  margin-bottom: 0;
+  border-radius: 5px;
+}
+
+#intro-modal {
+  padding: 15px;
+  padding-top: 5px;
+  line-height: 1.4em;
+}
+
+#message {
+  line-height: 1.4em;
+}
+
+.help {
+  width: 20vw;
+  padding-left: 10px;
+}

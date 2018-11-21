@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Glare - Node Knockout 2018</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.0bbb9002.css">
+    <link rel="stylesheet" href="iziModal.min.84eedeca.css">
+    <script src="https://browser.sentry-cdn.com/4.2.3/bundle.min.js" crossorigin="anonymous"></script>
+    <script>Sentry.init({
+  dsn: 'https://6525b5000c38408395f6d19bd42de068@sentry.io/1310271'
+});</script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izimodal/1.5.1/js/iziModal.min.js"></script>
+    <style>.container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .item {
+            flex-grow: 1;
+            align-content: center;
+        }</style>
+</head>
+
+<body>
+    <div id="body-anchor" style="position:fixed;bottom:0px">
+        <video autoplay="" playsinline="" muted="" id="webcam" width="500" height="300"></video>
+    </div>
+
+    <canvas id="glare"></canvas>
+
+    <div id="intro-modal" hidden="">
+        <p>
+            Hi, fellow gamer! Welcome to Glare - An endless runner you play without
+            touching your keyboard or your mouse!
+        </p>
+        <ul>
+            <strong>Instructions</strong>
+            <li>
+                You need to have and allow access to your Webcam in order to play this game.
+            </li>
+            <li>
+                On clicking 'Next', you'll be presented with the option to calibrate yours hands for the game
+            </li>
+            <li>
+                You get to choose two gestures - One for going up and the other for coming down.
+            </li>
+            <li>
+                Once calibration is done, the game is set to play! All the best!
+            </li>
+        </ul>
+        <a href="#" data-izimodal-open="#modal" data-izimodal-transitionin="fadeInDown">Next</a>
+    </div>
+    <div id="modal" hidden="">
+        <!-- data-iziModal-fullscreen="true"  data-iziModal-title="Welcome"  data-iziModal-subtitle="Subtitle"  data-iziModal-icon="icon-home" -->
+        <div class="container">
+            <div class="item">
+                <span id="webcam-anchor">
+
+                </span>
+            </div>
+            <div class="item help">
+                <p id="message"></p>
+                <button id="closed-fist" hidden="">&#x270A Falling down!</button>
+                <button id="open-palm" hidden="">&#x1F590 Going up!</button>
+                <button id="predict" hidden="">PLAY!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="score-modal" hidden="">
+        <div style="margin:auto;width:50%;text-align: center;">
+            <h3> You scored </h3>
+        </div>
+        <div style="margin:auto;width:50%;text-align: center;">
+            <h1 id="score"> </h1>
+        </div>
+        <button onclick="window.location.reload()" style="display:block;margin:auto;margin-bottom:10px;">
+            Restart
+        </button>
+    </div>
+
+    <!-- Trigger to open Modal -->
+    <a href="#modal" class="trigger" style="position:fixed;bottom:0px;right:50%;transform:translateX(-50%);">Instructions</a>
+
+    <footer>
+        <div id="hackbit-vote-widget"></div>
+    </footer>
+    <script src="https://www.nodeknockout.com/entries/131-aulisius/vote.js" type="text/javascript"></script>
+    <script>document.querySelector(".hb-link > img:nth-child(1)").src = "https://hackbit-nko2018.s3.amazonaws.com/images/nko-logo.png";</script>
+    <script src="main.c789be2c.js"></script>
+    <script src="modal.85f3c213.js"></script>
+</body>
+
+</html>
