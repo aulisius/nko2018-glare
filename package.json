@@ -7,13 +7,13 @@
     "postinstall": "npm run build",
     "start": "node server.js",
     "watch": "cross-env NODE_ENV=development parcel index.html --no-hmr --open",
-    "prebuild": "rm -rf public",
-    "build": "cross-env NODE_ENV=production parcel build index.html --out-dir public --out-file index.html --no-minify --public-url ./",
-    "postbuild": "cp -r assets/ public/assets"
+    "prebuild": "rm -rf docs",
+    "build": "cross-env NODE_ENV=production parcel build index.html --out-dir docs --out-file index.html --no-minify --public-url ./",
+    "postbuild": "cp -r assets/ docs/assets"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hackbit/nko2018-glare.git"
+    "url": "git+https://github.com/aulisius/nko2018-glare.git"
   },
   "keywords": [
     "glare"
@@ -21,9 +21,9 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Hackbit/nko2018-glare/issues"
+    "url": "https://github.com/aulisius/nko2018-glare/issues"
   },
-  "homepage": "https://github.com/Hackbit/nko2018-glare#readme",
+  "homepage": "https://github.com/aulisius/nko2018-glare#readme",
   "dependencies": {
     "@tensorflow/tfjs": "^0.13.3",
     "express": "^4.16.4",
